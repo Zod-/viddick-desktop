@@ -1,5 +1,4 @@
 #!/bin/bash
-
 function usage() {
   echo "viddick - chronicles of a capture program"
   echo ""
@@ -27,3 +26,43 @@ function usage() {
   echo "FILE:"
   echo "  FILE          direct path of a file to upload"
 }
+
+echoerr() { cat <<< "$@" 1>&2; }
+
+allOpt=false
+selectOpt=false
+recordOpt=false
+dialogOpt=false
+verboseOpt=false
+fileOpt=""
+
+for opt in "$@"; do
+  case "$opt" in
+    "-a"|"--all")
+      allOpt=true
+    ;;
+    "-s"|"--select")
+      selectOpt=true
+    ;;
+    "-r"|"--record")
+      recordOpt=true
+    ;;
+    "-d"|"--dialog")
+      dialogOpt=true
+    ;;
+    "-v"|"--verbose")
+      verboseOpt=true
+    ;;
+    "-h"|"--help")
+      usage
+      exit 0
+    ;;
+    -*)
+      echoerr "$0 unrecognized option $opt"
+      exit 1
+    ;;
+    *)
+      fileOpt="$opt"
+    ;;
+  esac
+done
