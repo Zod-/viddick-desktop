@@ -1,4 +1,5 @@
 #!/bin/bash
+programName=$0
 function usage() {
   echo "viddick - chronicles of a capture program"
   echo ""
@@ -27,28 +28,71 @@ function usage() {
   echo "  FILE          direct path of a file to upload"
 }
 
-echoerr() { cat <<< "$@" 1>&2; }
+echoerr() { cat <<< "$programName: $@" 1>&2; }
+trim() { sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' "$@"; }
 
 allOpt=false
 selectOpt=false
-recordOpt=false
+selectOpts=""
+
 dialogOpt=false
-verboseOpt=false
 fileOpt=""
+fileOpts=""
+
+recordOpt=false
+recordOpts=""
+
+verboseOpt=false
+
+function incompatible() {
+  echoerr "incompatible options: '$1' and '$2'"
+  exit 1
+}
+
+function addSelectOpt() {
+  if [ -n "$selectOpts" ]; then
+    incompatible $selectOpts $1
+  elif [ -n "$fileOpts" ]; then
+    incompatible $fileOpts $1
+  fi
+  selectOpts=`echo "$selectOpts $1" | trim`
+}
+
+function addRecordOpt() {
+  if [ -n "$fileOpts" ]; then
+    incompatible $fileOpts $1
+  fi
+  recordOpts=`echo "$recordOpts $1" | trim`
+}
+
+function addFileOpt() {
+  if [ -n "$selectOpts" ]; then
+    incompatible $selectOpts $1
+  elif [ -n "$fileOpts" ]; then
+    incompatible $fileOpts $1
+  elif [ -n "$recordOpts" ]; then
+    incompatible $recordOpts $1
+  fi
+  fileOpts=`echo "$fileOpts $1" | trim`
+}
 
 for opt in "$@"; do
   case "$opt" in
     "-a"|"--all")
       allOpt=true
+      addSelectOpt "$opt"
     ;;
     "-s"|"--select")
       selectOpt=true
+      addSelectOpt "$opt"
     ;;
     "-r"|"--record")
       recordOpt=true
+      addRecordOpt "$opt"
     ;;
     "-d"|"--dialog")
       dialogOpt=true
+      addFileOpt "$opt"
     ;;
     "-v"|"--verbose")
       verboseOpt=true
@@ -58,11 +102,12 @@ for opt in "$@"; do
       exit 0
     ;;
     -*)
-      echoerr "$0 unrecognized option $opt"
+      echoerr "unrecognized option $opt"
       exit 1
     ;;
     *)
       fileOpt="$opt"
+      addFileOpt "$opt"
     ;;
   esac
 done
