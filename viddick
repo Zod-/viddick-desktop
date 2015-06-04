@@ -22,6 +22,7 @@ function usage() {
   echo "                call this again to stop recording"
   echo "  -d, --dialog  upload a specific file choosen with zenity file dialog"
   echo "  -m, --move    delete the local file after copying"
+  echo "  -x, --xclip   copy the result into the clipboard after uploading"
   echo ""
   echo "  -h, --help    displays this"
   echo ""
@@ -43,6 +44,7 @@ recordOpt=false
 recordOpts=""
 
 moveOpt=false
+xclipOpt=false
 
 function incompatible() {
   echoerr "incompatible options: '$1' and '$2'"
@@ -95,6 +97,9 @@ for opt in "$@"; do
     ;;
     "-m"|"--move")
       moveOpt=true
+    ;;
+    "-x"|"--xclip")
+      xclipOpt=true
     ;;
     "-h"|"--help")
       usage
@@ -162,4 +167,10 @@ function uploadFile() {
 }
 
 output=$(uploadFile "$filename")
-[ -n "$output" ] && echo "$output"
+if [ -n "$output" ] ; then
+  if [ "$xclipOpt" = true ] ; then
+    echo "$output" | xclip -selection "clipboard"
+  else
+    echo "$output"
+  fi
+fi
