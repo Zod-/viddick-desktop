@@ -21,6 +21,7 @@ function usage() {
   echo "  -r, --record  record a video instead of taking a screenshot"
   echo "                call this again to stop recording"
   echo "  -d, --dialog  upload a specific file choosen with zenity file dialog"
+  echo "  -m, --move    delete the local file after copying"
   echo ""
   echo "  -h, --help    displays this"
   echo ""
@@ -40,6 +41,8 @@ fileOpts=""
 
 recordOpt=false
 recordOpts=""
+
+moveOpt=false
 
 function incompatible() {
   echoerr "incompatible options: '$1' and '$2'"
@@ -89,6 +92,9 @@ for opt in "$@"; do
     "-d"|"--dialog")
       dialogOpt=true
       addFileOpt "$opt"
+    ;;
+    "-m"|"--move")
+      moveOpt=true
     ;;
     "-h"|"--help")
       usage
@@ -151,7 +157,8 @@ function uploadFile() {
     exit 1
   fi
 
-  mkdir -p "$localFolder" && cp "$file" "$destination" && echo "$url"
+  mkdir -p "$localFolder" && cp "$file" "$destination" && echo "$url" &&
+    [ "$moveOpt" = true ] && rm "$file"
 }
 
 output=$(uploadFile "$filename")
