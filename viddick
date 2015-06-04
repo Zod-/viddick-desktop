@@ -136,6 +136,8 @@ function uploadFile() {
   destinationFile=$(basename "$file")
   hostPrefix="https://host.foo"
   
+  #/mount/server/uploads
+  localFolder="$destinationPrefix/$destinationFolder"
   #/mount/server/uploads/filename
   destination="$destinationPrefix/$destinationFolder/$destinationFile"
   #https://host.foo/uploads/filename
@@ -149,7 +151,7 @@ function uploadFile() {
     exit 1
   fi
 
-  mkdir -p "$destination" && cp "$file" "$destination" && echo "$url"
+  mkdir -p "$localFolder" && cp "$file" "$destination" && echo "$url"
 }
 
 output=$(uploadFile "$filename")
