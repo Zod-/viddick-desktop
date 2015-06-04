@@ -33,7 +33,7 @@ $url="https://host.foo/uploads/filename"
 
 Or simply rewrite the uploadFile function to a custom upload method
 
-#Copyright:
+#Copyright
 Code is under the MIT License and written by Zod-<br>
 Idea for the name by Muxgux
 
