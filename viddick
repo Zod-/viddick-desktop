@@ -23,6 +23,7 @@ function usage() {
   echo "  -d, --dialog  upload a specific file choosen with zenity file dialog"
   echo "  -m, --move    delete the local file after copying"
   echo "  -x, --xclip   copy the result into the clipboard after uploading"
+  echo "  -n, --notify  show a notification with the result url"
   echo ""
   echo "  -h, --help    displays this"
   echo ""
@@ -45,6 +46,7 @@ recordOpts=""
 
 moveOpt=false
 xclipOpt=false
+notifyOpt=false
 
 function incompatible() {
   echoerr "incompatible options: '$1' and '$2'"
@@ -100,6 +102,9 @@ for opt in "$@"; do
     ;;
     "-x"|"--xclip")
       xclipOpt=true
+    ;;
+    "-n"|"--notify")
+      notifyOpt=true
     ;;
     "-h"|"--help")
       usage
@@ -164,6 +169,9 @@ function uploadFile() {
 
   if mkdir -p "$localFolder" && cp "$file" "$destination"; then
     echo "$url"
+    if [ "$notifyOpt" = true ]; then
+      notify-send -i "go-up" "viddick complete" "$file"
+    fi
     if [ "$moveOpt" = true ]; then
       rm "$file"
     fi
