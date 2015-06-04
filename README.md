@@ -6,7 +6,7 @@ moves the file to a specified location on a webserver and echos
 the generated url.
 
 #Optional Requirements
-* escrotum for taking pictures and videos
+* [escrotum](https://github.com/Zod-/escrotum) for taking pictures and videos
 * zenity for selecting files with a file dialog
 * xclip for copying the result into the clipboard
 * notify-send for showing notifications
