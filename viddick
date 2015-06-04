@@ -16,11 +16,11 @@ function usage() {
   echo "  viddick [OPTION] [FILE]"
   echo ""
   echo "OPTIONS:"
-  echo "  -a, --all     capture the entire desktop"
+  echo "  -a, --all     capture the entire desktop (default)"
   echo "  -s, --select  select an area or application to capture"
   echo "  -r, --record  record a video instead of taking a screenshot"
   echo "                call this again to stop recording"
-  echo "  -d, --dialog  upload a specific file choosen with a file dialog"
+  echo "  -d, --dialog  upload a specific file choosen with zenity file dialog"
   echo ""
   echo "  -h, --help    displays this"
   echo ""
@@ -31,7 +31,6 @@ function usage() {
 echoerr() { cat <<< "$programName: $@" 1>&2; }
 trim() { sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' "$@"; }
 
-allOpt=false
 selectOpt=false
 selectOpts=""
 
@@ -79,7 +78,6 @@ function addFileOpt() {
 for opt in "$@"; do
   case "$opt" in
     "-a"|"--all")
-      allOpt=true
       addSelectOpt "$opt"
     ;;
     "-s"|"--select")
@@ -111,3 +109,26 @@ for opt in "$@"; do
     ;;
   esac
 done
+
+filename=""
+if [ -n "$fileOpts" ]; then
+  if [ "$dialogOpt" = true ] ; then
+    filename=$(zenity --file-selection)
+  else
+    filename="$fileOpt"
+  fi
+else
+  escrotumOptions=""
+  if [ "$selectOpt" = true ] ; then
+    escrotumOptions="$escrotumOptions -s"
+  fi
+  if [ "$recordOpt" = true ] ; then
+    if [ -e "/tmp/escrotum_recording.pid" ] ; then
+      #stop recording
+      kill -SIGINT "$(cat /tmp/escrotum_recording.pid)"
+      exit 0
+    fi
+    escrotumOptions="$escrotumOptions -r -t 4"
+  fi
+  filename=$(escrotum $escrotumOptions)
+fi
