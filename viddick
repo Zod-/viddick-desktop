@@ -118,18 +118,18 @@ done
 
 filename=""
 if [ -n "$fileOpts" ]; then
-  if [ "$dialogOpt" = true ] ; then
+  if [ "$dialogOpt" = true ]; then
     filename=$(zenity --file-selection)
   else
     filename="$fileOpt"
   fi
 else
   escrotumOptions=""
-  if [ "$selectOpt" = true ] ; then
+  if [ "$selectOpt" = true ]; then
     escrotumOptions="$escrotumOptions -s"
   fi
-  if [ "$recordOpt" = true ] ; then
-    if [ -e "/tmp/escrotum_recording.pid" ] ; then
+  if [ "$recordOpt" = true ]; then
+    if [ -e "/tmp/escrotum_recording.pid" ]; then
       #stop recording
       kill -SIGINT "$(cat /tmp/escrotum_recording.pid)"
       exit 0
@@ -154,21 +154,25 @@ function uploadFile() {
   #https://host.foo/uploads/filename
   url="$hostPrefix/$destinationFolder/$destinationFile"
 
-  if [ -z "$file" ] ; then
+  if [ -z "$file" ]; then
     echoerr "No file specified"
     exit 1
-  elif [ ! -f "$file" ] ; then
+  elif [ ! -f "$file" ]; then
     echoerr "Upload cancelled"
     exit 1
   fi
 
-  mkdir -p "$localFolder" && cp "$file" "$destination" && echo "$url" &&
-    [ "$moveOpt" = true ] && rm "$file"
+  if mkdir -p "$localFolder" && cp "$file" "$destination"; then
+    echo "$url"
+    if [ "$moveOpt" = true ]; then
+      rm "$file"
+    fi
+  fi
 }
 
 output=$(uploadFile "$filename")
-if [ -n "$output" ] ; then
-  if [ "$xclipOpt" = true ] ; then
+if [ -n "$output" ]; then
+  if [ "$xclipOpt" = true ]; then
     echo "$output" | xclip -selection "clipboard"
   else
     echo "$output"
