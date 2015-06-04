@@ -153,9 +153,13 @@ fi
 
 function uploadFile() {
   file="$1"
-  
+
   if [ -z "$destinationFile" ]; then
     destinationFile=$(basename "$file")
+  else
+    base=$(basename "$file")
+    extension="${base##*.}"
+    destinationFile="$destinationFile.$extension"
   fi
 
   #/mount/server/uploads
@@ -176,7 +180,7 @@ function uploadFile() {
   if mkdir -p "$localFolder" && cp "$file" "$destination"; then
     echo "$url"
     if [ "$notifyOpt" = true ]; then
-      notify-send -i "go-up" "viddick complete" "$file"
+      notify-send -i "go-up" "viddick complete" "$url"
     fi
     if [ "$moveOpt" = true ]; then
       rm "$file"
