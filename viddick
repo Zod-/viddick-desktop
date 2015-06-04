@@ -1,5 +1,12 @@
 #!/bin/bash
 programName=$0
+
+#config
+destinationPrefix="/mount/server"
+destinationFolder="uploads"
+hostPrefix="https://host.foo"
+destinationFile=""
+
 function usage() {
   echo "viddick - chronicles of a capture program"
   echo ""
@@ -146,12 +153,11 @@ fi
 
 function uploadFile() {
   file="$1"
-
-  destinationPrefix="/mount/server"
-  destinationFolder="uploads"
-  destinationFile=$(basename "$file")
-  hostPrefix="https://host.foo"
   
+  if [ -z "$destinationFile" ]; then
+    destinationFile=$(basename "$file")
+  fi
+
   #/mount/server/uploads
   localFolder="$destinationPrefix/$destinationFolder"
   #/mount/server/uploads/filename
