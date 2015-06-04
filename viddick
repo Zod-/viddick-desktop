@@ -41,8 +41,6 @@ fileOpts=""
 recordOpt=false
 recordOpts=""
 
-verboseOpt=false
-
 function incompatible() {
   echoerr "incompatible options: '$1' and '$2'"
   exit 1
@@ -91,9 +89,6 @@ for opt in "$@"; do
     "-d"|"--dialog")
       dialogOpt=true
       addFileOpt "$opt"
-    ;;
-    "-v"|"--verbose")
-      verboseOpt=true
     ;;
     "-h"|"--help")
       usage
