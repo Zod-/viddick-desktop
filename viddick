@@ -125,5 +125,32 @@ else
     fi
     escrotumOptions="$escrotumOptions -r -t 4"
   fi
-  filename=$(escrotum $escrotumOptions)
+  filename="$(escrotum $escrotumOptions)"
 fi
+
+function uploadFile() {
+  file="$1"
+
+  destinationPrefix="/mount/server"
+  destinationFolder="uploads"
+  destinationFile=$(basename "$file")
+  hostPrefix="https://host.foo"
+  
+  #/mount/server/uploads/filename
+  destination="$destinationPrefix/$destinationFolder/$destinationFile"
+  #https://host.foo/uploads/filename
+  url="$hostPrefix/$destinationFolder/$destinationFile"
+
+  if [ -z "$file" ] ; then
+    echoerr "No file specified"
+    exit 1
+  elif [ ! -f "$file" ] ; then
+    echoerr "Upload cancelled"
+    exit 1
+  fi
+
+  mkdir -p "$destination" && cp "$file" "$destination" && echo "$url"
+}
+
+output=$(uploadFile "$filename")
+[ -n "$output" ] && echo "$output"
